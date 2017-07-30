@@ -1,0 +1,68 @@
+.upper-button {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+.bottom-button {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+.black-pick:hover {
+    background-color: #000;
+    border-color: #000;
+}
+.black-pick {
+    background-color: #202020;
+    border-color: #202020;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.428571429;
+    border-radius: 15px;
+    border-color: #505050;
+}
+
+.btn-square {
+    width: 55px;
+    height: 30px;
+    text-align: center;
+    font-size: 15px;
+}
+
+button {
+    outline: none !important;
+}
+
+.thin {
+    height: 0;
+    width: 200px;
+    background: transparent;
+    border-radius: 0px 0px 0px 0px/0px;
+    border: solid 3px white;
+    border-top:none;
+    border-right:none;
+}
+
+.thick {
+    height: 0;
+    width: 200px;
+    background: transparent;
+    border-radius: 0px 0px 0px 0px/0px;
+    border: solid 5px white;
+    border-top:none;
+    border-right:none;
+}
+
+.thicker {
+    height: 0;
+    width: 200px;
+    background: transparent;
+    border-radius: 0px 0px 0px 0px/0px;
+    border: solid 7px white;
+    border-top:none;
+    border-right:none;
+}
