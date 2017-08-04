@@ -1,6 +1,6 @@
-import rapid from 'rapid-io' // ES6 modules
+//import rapid from 'rapid-io' // ES6 modules
 //const rapid = require('rapid-io');
-const rapidClient = rapid.createClient("NDA1OWE0MWo1b3AzYjA2LnJhcGlkLmlv");
+//const rapidClient = rapid.createClient("NDA1OWE0MWo1b3AzYjA2LnJhcGlkLmlv");
 
 /*rapidClient
   .collection('strokes')
@@ -13,6 +13,11 @@ const rapidClient = rapid.createClient("NDA1OWE0MWo1b3AzYjA2LnJhcGlkLmlv");
         .delete()
     })
   });*/
+const streamer = new Meteor.Streamer('draw');
+
+sendMessage = function(message) {
+  streamer.emit('line', message);
+};
 
 var canvas;
 var context;
@@ -34,6 +39,49 @@ Template.home.events({
       setColor("FFFFFF")
     }
   }
+});
+
+Template.home.onCreated(function () {
+  var instance = this;
+
+  instance.subscribe('lines', 0);
+
+  /*instance.autorun(function () {
+
+    console.log("rerun");
+    var colorMap = {
+      'g': "#449d44"
+    };
+    const cursor = Lines.find({});
+    const handle = cursor.observeChanges({
+      added(id, line) {
+        //console.log(`new line`, line);
+        if (line.id == userId) {
+          return;
+        }
+        draw(parseFloat(line.frX), parseFloat(line.toX), parseFloat(line.frY), parseFloat(line.toY), colorMap[line.co] ? colorMap[line.co] : ("#" + line.co), parseFloat(line.wi), true);
+      },
+      changed: function(id, line) {
+        //console.log("changed", line);
+        if (line.id == userId) {
+          return;
+        }
+        // draw(parseFloat(line.frX), parseFloat(line.toX), parseFloat(line.frY), parseFloat(line.toY), colorMap[line.co] ? colorMap[line.co] : ("#" + line.co), parseFloat(line.wi), true);
+      },
+      removed() {
+        //console.log(`Removed line`);
+      }
+    });
+  });*/
+
+  var colorMap = {
+    'g': "#449d44"
+  };
+
+  streamer.on('line', function(line) {
+    draw(parseFloat(line.frX), parseFloat(line.toX), parseFloat(line.frY), parseFloat(line.toY), colorMap[line.co] ? colorMap[line.co] : ("#" + line.co), parseFloat(line.wi), true);
+    console.log('user: ' + line);
+  });
 });
 
 
@@ -102,7 +150,7 @@ Template.home.onRendered(function () {
     canvas.dispatchEvent(mouseEvent);
   }, false);
 
-  rapidClient
+  /*rapidClient
     .channel('strokesChannel')
     .subscribe(
       msg => {
@@ -118,7 +166,7 @@ Template.home.onRendered(function () {
       error => console.log(error)
     );
 
-  /*rapidClient
+  nt
     .collection(collectionName)
     .order({ $modified: 'desc' }) // sort by modified date in a descending order
     //.filter({ priority: 'high' }) // filter by a 'priority' parameter
@@ -252,7 +300,7 @@ function move(e) {
     y: (900/canvas.height)*lastMouse.y
   };
   draw(sendLastMouse.x, sendMouse.x, sendLastMouse.y, sendMouse.y, context.strokeStyle, context.lineWidth, true);
-  /*rapidClient
+  /*nt
     .collection(collectionName)
     .newDocument() // generate the id of a new document automatically
     .mutate({
@@ -265,7 +313,7 @@ function move(e) {
       wi: context.lineWidth
     });*/
 
-  rapidClient
+  /*rapidClient
     .channel('strokesChannel')
     .publish({
       id: userId,
@@ -276,6 +324,26 @@ function move(e) {
       co: context.strokeStyle.substr(1),
       wi: context.lineWidth
     });
+
+  Meteor.call("addLine", {
+    id: userId,
+    frX: sendLastMouse.x,
+    frY: sendLastMouse.y,
+    toX: sendMouse.x,
+    toY: sendMouse.y,
+    co: context.strokeStyle.substr(1),
+    wi: context.lineWidth
+  });*/
+
+  sendMessage({
+    id: userId,
+    frX: sendLastMouse.x,
+    frY: sendLastMouse.y,
+    toX: sendMouse.x,
+    toY: sendMouse.y,
+    co: context.strokeStyle.substr(1),
+    wi: context.lineWidth
+  });
 
   lastMouse = mouse;
 }
