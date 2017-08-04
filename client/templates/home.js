@@ -1,18 +1,3 @@
-//import rapid from 'rapid-io' // ES6 modules
-//const rapid = require('rapid-io');
-//const rapidClient = rapid.createClient("NDA1OWE0MWo1b3AzYjA2LnJhcGlkLmlv");
-
-/*rapidClient
-  .collection('strokes')
-  .fetch(strokes => {
-    strokes.forEach(st => {
-      console.log("deleting ", st.id)
-      rapidClient
-        .collection('strokes')
-        .document(st.id)
-        .delete()
-    })
-  });*/
 const streamer = new Meteor.Streamer('draw');
 
 sendMessage = function(message) {
@@ -80,7 +65,6 @@ Template.home.onCreated(function () {
 
   streamer.on('line', function(line) {
     draw(parseFloat(line.frX), parseFloat(line.toX), parseFloat(line.frY), parseFloat(line.toY), colorMap[line.co] ? colorMap[line.co] : ("#" + line.co), parseFloat(line.wi), true);
-    console.log('user: ' + line);
   });
 });
 
@@ -149,45 +133,6 @@ Template.home.onRendered(function () {
     });
     canvas.dispatchEvent(mouseEvent);
   }, false);
-
-  /*rapidClient
-    .channel('strokesChannel')
-    .subscribe(
-      msg => {
-        if (msg.id == userId) {
-          return;
-        }
-        //console.log(strokes[0].body);
-        var colorMap = {
-          'g': "#449d44"
-        };
-        draw(parseFloat(msg.frX), parseFloat(msg.toX), parseFloat(msg.frY), parseFloat(msg.toY), colorMap[msg.co] ? colorMap[msg.co] : ("#" + msg.co), parseFloat(msg.wi), true);
-      },
-      error => console.log(error)
-    );
-
-  nt
-    .collection(collectionName)
-    .order({ $modified: 'desc' }) // sort by modified date in a descending order
-    //.filter({ priority: 'high' }) // filter by a 'priority' parameter
-    .subscribe((strokes, changes) => {
-      const { added, updated, removed } = changes;
-      //let msg = strokes[0].body;
-      //console.log(strokes);
-
-      //console.log(strokes[0].body);
-      var colorMap = {
-        'g': "#449d44"
-      };
-
-      added.forEach(msgB => {
-        var msg = msgB.body;
-        console.log(msg);
-        if (msg.id != userId) {
-          draw(parseFloat(msg.frX), parseFloat(msg.toX), parseFloat(msg.frY), parseFloat(msg.toY), colorMap[msg.co] ? colorMap[msg.co] : ("#" + msg.co), parseFloat(msg.wi), true);
-        }
-      });
-    });*/
 
   // changeMouse creates a temporary invisible canvas that shows the cursor, which is then set as the cursor through css:
   function changeMouse() {
@@ -300,22 +245,9 @@ function move(e) {
     y: (900/canvas.height)*lastMouse.y
   };
   draw(sendLastMouse.x, sendMouse.x, sendLastMouse.y, sendMouse.y, context.strokeStyle, context.lineWidth, true);
-  /*nt
-    .collection(collectionName)
-    .newDocument() // generate the id of a new document automatically
-    .mutate({
-      id: userId,
-      frX: sendLastMouse.x,
-      frY: sendLastMouse.y,
-      toX: sendMouse.x,
-      toY: sendMouse.y,
-      co: context.strokeStyle.substr(1),
-      wi: context.lineWidth
-    });*/
 
-  /*rapidClient
-    .channel('strokesChannel')
-    .publish({
+  /* Old way of doing it not as efficient as pure pub/sub
+    Meteor.call("addLine", {
       id: userId,
       frX: sendLastMouse.x,
       frY: sendLastMouse.y,
@@ -324,16 +256,7 @@ function move(e) {
       co: context.strokeStyle.substr(1),
       wi: context.lineWidth
     });
-
-  Meteor.call("addLine", {
-    id: userId,
-    frX: sendLastMouse.x,
-    frY: sendLastMouse.y,
-    toX: sendMouse.x,
-    toY: sendMouse.y,
-    co: context.strokeStyle.substr(1),
-    wi: context.lineWidth
-  });*/
+  */
 
   sendMessage({
     id: userId,
